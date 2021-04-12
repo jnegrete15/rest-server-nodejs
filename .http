@@ -1,0 +1,21 @@
+
+### getUsers
+http://localhost:8080/api/users?q=hola&name=alberto
+
+### putUser
+PUT http://localhost:8080/api/users/184
+
+
+### postUser
+POST http://localhost:8080/api/users
+Content-Type: application/json
+Accept: application/json
+
+{
+  "nombre": "josé alberto",
+  "edad": "22"
+}
+
+
+### deleteUser
+DELETE http://localhost:8080/api/users
