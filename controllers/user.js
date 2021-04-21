@@ -1,40 +1,69 @@
 const {response, request} = require('express');
+const bcryptjs = require('bcryptjs');
+const User = require('../models/user');
 
 
-
-const getUser = (req = request, res = response) =>{
+const getUser = async(req = request, res = response) =>{
   
-  const query = req.query;
+  const { limit, from = 0} = req.query;
+  const query = {status:true};
+
+  const [total, users] = await Promise.all([
+    User.countDocuments(query),
+    User.find(query)
+    .skip(Number(from))
+    .limit(Number(limit))
+  ])
 
   res.json({
-    msg: 'get from controller',
-    query
+    total,
+    users
   })
 }
 
-const putUser = (req, res) => {
+const putUser = async(req, res) => {
 
-  const { id } = req.params;
+  const {id} = req.params;
+  const {_id, password, google, email, ...info} = req.body
 
-  res.json({
-    msg: 'put api from controller',
-    id
-  })
+  if(password){
+    const salt = bcryptjs.genSaltSync();
+    info.password = bcryptjs.hashSync(password, salt)
+  }
+
+  const user = await User.findByIdAndUpdate(id, info);
+
+  res.json(user)
 }
 
-const postUser = (req, res) =>{
+const postUser = async(req, res) =>{
 
-  const {nombre, edad} = req.body;
+  const { name, email, password, role} = req.body;
+  const user = new User({name,email,password,role});
+
+  //encrypt password
+  const salt = bcryptjs.genSaltSync();
+  user.password = bcryptjs.hashSync(password, salt)
+
+  await user.save()
 
   res.json({
     msg: 'post from controller',
-    nombre,
-    edad
+    user
   });
 }
 
-const deleteUser = (req, res) =>{
-  res.send('delete from contoller')
+const deleteUser = async(req, res) =>{
+
+  const { id } = req.params;
+
+  //delete user, do not recommended
+  //const user = await User.findByIdAndDelete(id);
+
+  const user = await User.findByIdAndUpdate(id, {status:false})
+
+
+  res.json(user)
 }
 
 
