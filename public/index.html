@@ -19,7 +19,7 @@
 
     var url = (window.location.hostname.includes('localhost'))
                 ? 'http://localhost:8080/api/auth/google'
-                : 'http://restserver-jnegrete15.herokuapp.com/api/auth/google';
+                : 'https://restserver-jnegrete15.herokuapp.com/api/auth/google';
 
     function onSignIn(googleUser) {
       var profile = googleUser.getBasicProfile();
